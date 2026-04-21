@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fast Minit – Vi fixar det mesta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --indigo:       #3B2D8F;
+      --indigo-mid:   #4E3BAF;
+      --indigo-light: #6B56CC;
+      --indigo-pale:  #EEEAFB;
+      --indigo-xpale: #F7F5FE;
+      --bg:           #F5F3F0;
+      --bg-warm:      #EEEAFB;
+      --bg-section:   #F0EDF8;
+      --card:         #FFFFFF;
+      --text-dark:    #1A1530;
+      --text-mid:     #4A4068;
+      --text-muted:   #525263;
+      --text-dim:     #6C6C7E;
+      --electric:     #4E3BAF;
+      --accent:       #4E3BAF;
+      --accent-light: rgba(78,59,175,0.08);
+      --border:       rgba(78,59,175,0.12);
+      --border-mid:   rgba(78,59,175,0.2);
+      --white:        #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--indigo-mid);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(78,59,175,0.3);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, width 0.3s, height 0.3s;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.75rem 5%;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: padding 0.4s, background 0.4s, border-color 0.4s;
+    }
+    nav.scrolled {
+      padding: 0.9rem 5%;
+      background: rgba(245,243,240,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.5rem;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: color 0.4s;
+    }
+    nav.scrolled .logo { color: var(--text-dark); }
+    .logo-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+      transition: background 0.4s;
+    }
+    nav.scrolled .logo-dot { background: var(--indigo-mid); }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+    nav ul { list-style: none; display: flex; gap: 2.5rem; align-items: center; }
+    nav ul a {
+      text-decoration: none; font-size: 0.875rem; font-weight: 400;
+      color: rgba(255,255,255,0.85); letter-spacing: 0.02em;
+      transition: color 0.2s; position: relative;
+    }
+    nav.scrolled ul a { color: var(--text-mid); }
+    nav ul a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1px;
+      background: currentColor;
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+    nav ul a:hover { color: #fff; }
+    nav.scrolled ul a:hover { color: var(--indigo-mid); }
+    nav ul a:hover::after { transform: scaleX(1); }
+    .nav-cta {
+      background: rgba(255,255,255,0.15) !important;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,0.4) !important;
+      padding: 0.6rem 1.4rem; border-radius: 2px;
+      font-weight: 600 !important; font-family: 'Syne', sans-serif;
+      letter-spacing: 0.04em; font-size: 0.82rem !important;
+      text-transform: uppercase; transition: background 0.2s, transform 0.2s, border-color 0.4s !important;
+    }
+    nav.scrolled .nav-cta {
+      background: var(--indigo-mid) !important;
+      border-color: var(--indigo-mid) !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: rgba(255,255,255,0.28) !important; transform: translateY(-1px) !important; }
+    nav.scrolled .nav-cta:hover { background: var(--indigo) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; position: relative;
+      display: flex; align-items: flex-end;
+      padding: 0 5% 8rem; overflow: hidden;
+    }
+    .hero-bg { position: absolute; inset: 0; background: #1A1530; z-index: 0; }
+    .hero-bg img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      opacity: 0.55; filter: saturate(0.65);
+    }
+   /* .hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, #1A1530 0%, rgba(26,21,48,0.55) 40%, rgba(78,59,175,0.1) 100%);
+    }
+      */
+    .hero-glow {
+      position: absolute; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(78,59,175,0.4) 0%, transparent 70%);
+      bottom: -100px; right: -100px; pointer-events: none; z-index: 1;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; padding: 0.4rem 1rem; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 2rem;
+      opacity: 0; animation: fade-up 0.7s 0.1s forwards;
+    }
+    .hero-tag span { width: 6px; height: 6px; background: #fff; border-radius: 50%; display: inline-block; opacity: 0.8; }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.6rem, 5.5vw, 4.8rem);
+      font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
+      color: #fff; margin-bottom: 1.75rem;
+      opacity: 0; animation: fade-up 0.7s 0.25s forwards;
+    }
+    h1 .highlight { color: #C8BFFF; font-style: italic; }
+    .hero-desc {
+      font-size: 1.15rem; color: rgba(255,255,255,0.7);
+      max-width: 540px; margin-bottom: 2.5rem;
+      font-weight: 300; line-height: 1.75;
+      opacity: 0; animation: fade-up 0.7s 0.4s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+      opacity: 0; animation: fade-up 0.7s 0.55s forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--indigo-mid); color: #fff;
+      padding: 1rem 2rem; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 0.85rem;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: 2px; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--indigo); transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(78,59,175,0.25);
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(3px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8);
+      padding: 1rem 2rem; text-decoration: none; font-size: 0.9rem;
+      border-radius: 2px; transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; transform: translateY(-2px); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; right: 5%;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: rgba(255,255,255,0.35); font-size: 0.72rem;
+      letter-spacing: 0.15em; text-transform: uppercase; z-index: 2;
+      writing-mode: vertical-rl;
+    }
+    .hero-scroll::after {
+      content: ''; width: 1px; height: 60px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+      animation: scroll-line 2s ease-in-out infinite;
+    }
+    @keyframes scroll-line {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.5); opacity: 0.4; }
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      overflow: hidden; background: var(--indigo-mid);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 0.85rem 0;
+    }
+    .ticker-track {
+      display: flex; animation: ticker 28s linear infinite; width: max-content;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .ticker-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0 2.5rem;
+      font-family: 'Syne', sans-serif; font-size: 0.78rem;
+      font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.9); white-space: nowrap;
+    }
+    .ticker-sep { color: rgba(255,255,255,0.4); font-size: 1rem; }
+    @keyframes ticker {
+      0% { transform: translateX(0); } 100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTION COMMONS ── */
+    section { padding: 7rem 5%; }
+    .label-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--indigo-mid); margin-bottom: 1.25rem;
+    }
+    .label-tag::before {
+      content: ''; display: block; width: 24px; height: 1.5px;
+      background: var(--indigo-mid);
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 800; line-height: 1.0; letter-spacing: -0.02em;
+      color: var(--text-dark); margin-bottom: 1.25rem;
+    }
+    h2 .em { font-style: italic; color: var(--indigo-mid); }
+
+    /* ── SERVICES ── */
+    .services { background: var(--bg-section); position: relative; overflow: hidden; }
+    .services::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(78,59,175,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .services-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 4rem; gap: 2rem; flex-wrap: wrap;
+    }
+    .services-header-left { max-width: 560px; }
+    .services-header p {
+      color: var(--text-muted); font-weight: 400;
+      line-height: 1.75; font-size: 1.05rem; margin-top: 0.75rem;
+    }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+    }
+    .service-card {
+      background: #fff; padding: 2.5rem; position: relative;
+      overflow: hidden; cursor: default; transition: background 0.35s;
+    }
+    .service-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(78,59,175,0.04) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .service-card:hover { background: var(--indigo-xpale); }
+    .service-card:hover::before { opacity: 1; }
+    .service-card-num {
+      font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1.75rem;
+    }
+    .service-icon {
+      width: 44px; height: 44px; border: 1px solid var(--border);
+      border-radius: 2px; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem; color: var(--indigo-mid);
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .service-card:hover .service-icon { border-color: var(--indigo-mid); background: var(--accent-light); }
+    .service-card h3 {
+      font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700;
+      margin-bottom: 0.75rem; color: var(--text-dark); letter-spacing: -0.01em;
+    }
+    .service-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; font-weight: 400; }
+    .service-price {
+      margin-top: 1.75rem; padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem; color: var(--text-dim);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .service-price strong {
+      font-family: 'Syne', sans-serif; font-size: 1rem;
+      font-weight: 700; color: var(--indigo-mid);
+    }
+    .service-arrow {
+      width: 28px; height: 28px; border: 1px solid var(--border);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); transition: border-color 0.3s, color 0.3s, transform 0.3s;
+    }
+    .service-card:hover .service-arrow {
+      border-color: var(--indigo-mid); color: var(--indigo-mid);
+      transform: translate(2px, -2px);
+    }
+
+    /* ── IMAGES STRIP ── */
+    .images-strip { padding: 0; background: var(--bg); overflow: hidden; }
+    .images-strip-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; height: 520px; gap: 2px; }
+    .strip-img { overflow: hidden; position: relative; }
+    .strip-img img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: saturate(0.75); transition: filter 0.5s, transform 0.6s;
+    }
+    .strip-img:hover img { filter: saturate(1); transform: scale(1.03); }
+    .strip-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(26,21,48,0.5) 0%, transparent 50%);
+    }
+    .strip-label {
+      position: absolute; bottom: 1.5rem; left: 1.5rem;
+      font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.85);
+      background: rgba(78,59,175,0.75); padding: 0.35rem 0.75rem;
+      border-radius: 1px; backdrop-filter: blur(8px);
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      background: #fff; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+      padding: 7rem 5%;
+    }
+    .about-image-wrap { position: relative; }
+    .about-image-main { width: 100%; aspect-ratio: 4/5; overflow: hidden; border-radius: 2px; }
+    .about-image-main img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: saturate(0.8); transition: filter 0.5s;
+    }
+    .about-image-wrap:hover .about-image-main img { filter: saturate(1); }
+    .about-image-accent {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      width: 200px; background: var(--indigo-mid); padding: 1.75rem; border-radius: 2px;
+    }
+    .about-accent-num {
+      font-family: 'Syne', sans-serif; font-size: 2.8rem;
+      font-weight: 800; color: #fff; line-height: 1;
+    }
+    .about-accent-label { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 0.35rem; font-weight: 300; }
+    .about-text p {
+      color: var(--text-muted); font-weight: 400; line-height: 1.85;
+      font-size: 1.02rem; margin-bottom: 1.25rem;
+    }
+    .about-text p strong { color: var(--text-dark); font-weight: 500; }
+    .services-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 2rem 0; }
+    .services-list-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.875rem; color: var(--text-mid);
+      padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+    }
+    .services-list-item::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--indigo-mid); border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: var(--indigo-mid); padding: 5rem 5%;
+      
+      position: relative; 
+      overflow: hidden; text-align: center;
+    }
+    .cta-band::before {
+      content: 'FAST MINIT'; position: absolute;
+
+      font-family: 'Syne', sans-serif; font-size: clamp(8rem, 18vw, 16rem);
+      font-weight: 800; color: rgba(255,255,255,0.04);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      white-space: nowrap; letter-spacing: -0.04em; pointer-events: none;
+    }
+    .cta-band-inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+    .cta-band h2 { font-size: clamp(2rem, 4vw, 3.2rem); color: #fff; }
+    .cta-band .em { color: rgba(200,191,255,0.9); }
+    .cta-band p {
+      font-size: 1.1rem; color: rgba(255,255,255,0.7); font-weight: 300;
+      line-height: 1.75; margin: 1.25rem 0 2.5rem;
+    }
+    .cta-band .label-tag { color: rgba(200,191,255,0.9); }
+    .cta-band .label-tag::before { background: rgba(200,191,255,0.9); }
+    .cta-band-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary-inv {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: #fff; color: var(--indigo-mid);
+      padding: 1rem 2rem; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 0.85rem;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: 2px; transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary-inv:hover { background: var(--indigo-pale); transform: translateY(-2px); }
+    .btn-primary-inv svg { transition: transform 0.2s; }
+    .btn-primary-inv:hover svg { transform: translateX(3px); }
+    .btn-ghost-inv {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.85);
+      padding: 1rem 2rem; text-decoration: none; font-size: 0.9rem;
+      border-radius: 2px; transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-ghost-inv:hover { border-color: rgba(255,255,255,0.6); color: #fff; transform: translateY(-2px); }
+
+    /* ── VISIT SECTION ── */
+    .visit-section { max-width: 900px; margin: 0 auto; }
+    .visit-header { margin-bottom: 3.5rem; max-width: 640px; }
+    .visit-lead {
+      font-size: 1.1rem; color: var(--text-muted); font-weight: 400;
+      line-height: 1.8; margin-top: 1rem;
+    }
+    .visit-cards {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2px;
+    }
+    .visit-card {
+      background: #fff; padding: 2rem;
+      display: flex; align-items: flex-start; gap: 1.25rem; transition: background 0.25s;
+    }
+    .visit-card:hover { background: var(--indigo-xpale); }
+    .visit-card-icon {
+      width: 40px; height: 40px; border: 1px solid var(--border);
+      border-radius: 2px; display: flex; align-items: center; justify-content: center;
+      color: var(--indigo-mid); flex-shrink: 0; margin-top: 0.1rem;
+    }
+    .visit-card-label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-dim);
+      font-family: 'Syne', sans-serif; margin-bottom: 0.4rem;
+    }
+    .visit-card-value { font-size: 0.98rem; color: var(--text-mid); font-weight: 400; line-height: 1.6; }
+    .visit-cta {
+      background: var(--indigo-mid); padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap;
+    }
+    .visit-cta-eyebrow {
+      display: block; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(200,191,255,0.9); margin-bottom: 0.35rem; font-family: 'Syne', sans-serif;
+    }
+    .visit-cta-main {
+      display: block; font-family: 'Syne', sans-serif; font-size: 1.25rem;
+      font-weight: 700; color: #fff; letter-spacing: -0.01em;
+    }
+    .visit-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    }
+
+    /* ── MAP MODAL ── */
+    .map-modal-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(26,21,48,0.7); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .map-modal-backdrop.open { display: flex; }
+    .map-modal {
+      position: relative; width: 100%; max-width: 1000px;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden;
+      animation: modal-in 0.35s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes modal-in {
+      from { opacity: 0; transform: scale(0.95) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .map-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border);
+      background: var(--indigo-xpale);
+    }
+    .map-modal-title {
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dark);
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .map-modal-title-dot {
+      width: 8px; height: 8px; background: var(--indigo-mid);
+      border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .map-modal-close {
+      width: 32px; height: 32px; border: 1px solid var(--border);
+      border-radius: 2px; background: none; color: var(--text-muted);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .map-modal-close:hover { background: var(--border); color: var(--text-dark); }
+    .map-wrap { position: relative; width: 100%; height: 520px; overflow: hidden; }
+    .map-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: 79.3% 38.6%; display: block;
+      filter: saturate(0.55) brightness(0.65) hue-rotate(200deg);
+    }
+    .map-overlay-tint {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(78,59,175,0.15) 0%, rgba(26,21,48,0.1) 100%);
+      pointer-events: none;
+    }
+    .map-pin-card {
+      position: absolute; background: var(--indigo-mid);
+      border: 1px solid rgba(200,191,255,0.4); padding: 0.85rem 1.25rem;
+      border-radius: 2px; display: flex; align-items: center; gap: 0.75rem;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4); white-space: nowrap;
+    }
+    .map-pin-card::after {
+      content: ''; position: absolute; bottom: -9px; left: 50%;
+      transform: translateX(-50%);
+      border-left: 9px solid transparent; border-right: 9px solid transparent;
+      border-top: 9px solid var(--indigo-mid);
+    }
+    .map-pin-dot {
+      width: 10px; height: 10px; background: #fff;
+      border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .map-pin-text { line-height: 1.25; }
+    .map-pin-name {
+      font-family: 'Syne', sans-serif; font-size: 0.82rem;
+      font-weight: 700; color: #fff; letter-spacing: 0.02em;
+    }
+    .map-pin-sub { font-size: 0.7rem; color: rgba(255,255,255,0.6); font-weight: 300; }
+    .map-corner-link {
+      position: absolute; bottom: 1.25rem; right: 1.25rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.9); border: 1px solid var(--border);
+      color: var(--indigo-mid); padding: 0.55rem 1rem;
+      font-size: 0.75rem; font-family: 'Syne', sans-serif; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; backdrop-filter: blur(8px);
+      transition: background 0.2s, color 0.2s;
+    }
+    .map-corner-link:hover { background: var(--indigo-mid); color: #fff; border-color: var(--indigo-mid); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text-dark); border-top: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.4); padding: 3rem 5%;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem; font-size: 0.82rem;
+    }
+    footer .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.25rem; color: #fff; text-decoration: none; }
+    footer a { color: inherit; text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--indigo-light); }
+    .footer-links { display: flex; gap: 2rem; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 900px) {
+      .hero { align-items: center; padding-top: 120px; padding-bottom: 6rem; }
+      .about { grid-template-columns: 1fr; padding: 4rem 5%; }
+      .about-image-wrap { display: none; }
+      nav ul { display: none; }
+      .nav-mobile-cta {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.4);
+        padding: 0.55rem 1.1rem; border-radius: 2px;
+        font-weight: 600; font-family: 'Syne', sans-serif;
+        letter-spacing: 0.04em; font-size: 0.78rem;
+        text-transform: uppercase; text-decoration: none;
+        transition: background 0.2s, border-color 0.4s, color 0.4s;
+      }
+      nav.scrolled .nav-mobile-cta {
+        background: var(--indigo-mid);
+        border-color: var(--indigo-mid);
+      }
+      .nav-mobile-cta:hover { background: rgba(255,255,255,0.28); }
+      nav.scrolled .nav-mobile-cta:hover { background: var(--indigo); }
+      .services-header { flex-direction: column; }
+      .images-strip-inner { grid-template-columns: 1fr; height: auto; }
+      .strip-img { height: 260px; }
+      .visit-cards { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 901px) { .nav-mobile-cta { display: none; } }
+    @media (max-width: 600px) {
+      h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
+      .services-grid { grid-template-columns: 1fr; }
+      .services-list { grid-template-columns: 1fr; }
+      .about { padding: 3rem 5%; }
+      .map-modal-backdrop { padding: 0; align-items: flex-end; }
+      .map-modal { border-radius: 4px 4px 0 0; max-width: 100%; }
+      .map-wrap { height: 360px; }
+      .map-pin-card { padding: 0.6rem 0.85rem; gap: 0.5rem; }
+      .map-pin-dot { width: 8px; height: 8px; }
+      .map-pin-name { font-size: 0.72rem; }
+      .map-pin-sub { font-size: 0.62rem; }
+      .map-pin-card::after { border-left-width: 7px; border-right-width: 7px; border-top-width: 7px; bottom: -7px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="logo">FAST MINIT<span class="logo-dot" style="margin-left:0.4rem;"></span></a>
+  <ul>
+    <li><a href="#tjanster">Tjänster</a></li>
+    <li><a href="#om-oss">Om oss</a></li>
+    <li><a href="#kontakt" class="nav-cta">Kontakt</a></li>
+  </ul>
+  <a href="#kontakt" class="nav-mobile-cta">Kontakt</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="hero-butik.webp" alt="Fast Minit butik" />
+  </div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span></span>Med fokus på hantverk och kvalitet</div>
+    <h1>När något går <span class="highlight">sönder</span><br>fixar vi det.</h1>
+    <p class="hero-desc">Skovård, väskor, klockor, nycklar, gravering och lestning – allt under ett tak. Snabbt, professionellt och med omsorg.</p>
+    <div class="hero-actions">
+      <a href="#kontakt" class="btn-primary">
+        Hitta oss
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#tjanster" class="btn-ghost">Se alla tjänster</a>
+    </div>
+  </div>
+ 
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item">Skoreparation <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Väskreparation <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Klockservice <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Nyckelservice <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Gravering <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Skovård <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Skoreparation <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Väskreparation <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Klockservice <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Nyckelservice <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Gravering <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Skovård <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Skoreparation <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Väskreparation <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Klockservice <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Nyckelservice <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Gravering <span class="ticker-sep">✦</span></div>
+    <div class="ticker-item">Skovård <span class="ticker-sep">✦</span></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="tjanster">
+  <div class="services-header">
+    <div class="services-header-left">
+      <div class="label-tag reveal">Vad vi erbjuder</div>
+      <h2 class="reveal reveal-delay-1">Tjänster med <span class="em">kvalité</span></h2>
+      <p class="reveal reveal-delay-2">Från snabba reparationer till skräddarsydda lösningar – kom in så tar vi en titt.</p>
+    </div>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-card-num">01</div>
+      <div class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
+      <h3>Skoreparation</h3>
+      <p>Sulbyte, klackbyte, syning och allt däremellan. Vi räddar dina favoritskor och ger dem nytt liv – oavsett skick.</p>
+      <div class="service-arrow" style="margin-top:1.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-card-num">02</div>
+      <div class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg></div>
+      <h3>Väskreparation</h3>
+      <p>Spruckna sömmar, trasiga handtag, sönderrepad dragkedja? Vi reparerar din väska med rätt material och känsla för original.</p>
+      <div class="service-arrow" style="margin-top:1.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <div class="service-card-num">03</div>
+      <div class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <h3>Klockservice</h3>
+      <p>Batteribyte, länkjustering och bandbyte. Vi tar hand om din klocka snabbt och noggrant – från vardagsklockor till dyrbara märkesklockor.</p>
+      <div class="service-arrow" style="margin-top:1.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-card-num">04</div>
+      <div class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+      <h3>Nyckelservice</h3>
+      <p>Snabb nyckelkopiering av alla typer – lägenhetnycklar, bilnycklar och specialnycklar. Vi har ett av Uddevallas största sortiment av nyckelemnen.</p>
+      <div class="service-arrow" style="margin-top:1.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <div class="service-card-num">05</div>
+      <div class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+      <h3>Gravering</h3>
+      <p>Personalisera smycken, presentartiklar, namnbrickor och mer. Professionell gravering med precision – perfekt för minnesvärda gåvor.</p>
+      <div class="service-arrow" style="margin-top:1.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+    </div>
+    <div class="service-card reveal reveal-delay-3">
+      <div class="service-card-num">06</div>
+      <div class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      <h3>Skovård</h3>
+      <p>Impregnering, färgning, rengöring och renovering av läder. Vi säljer också ett brett sortiment av skovårdsprodukter för alla skosorter.</p>
+      <div class="service-arrow" style="margin-top:1.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGES STRIP -->
+<div class="images-strip">
+  <div class="images-strip-inner">
+    <div class="strip-img">
+      <img src="nyckelservice.jpg" alt="Nyckelservice och gravering" />
+      <div class="strip-img-overlay"></div>
+      <div class="strip-label">Nyckelservice</div>
+    </div>
+    <div class="strip-img">
+      <img src="klockservice.jpg" alt="Vår personal och butik" />
+      <div class="strip-img-overlay"></div>
+      <div class="strip-label">Klockservice</div>
+    </div>
+    <div class="strip-img">
+      <img src="skovard.jpg" alt="Yrkeskunniga tekniker" />
+      <div class="strip-img-overlay"></div>
+      <div class="strip-label">Skovård</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="om-oss" style="padding:0;background:#fff;">
+  <div class="about">
+    <div class="about-image-wrap reveal">
+      <div class="about-image-main">
+        <img src="om-oss.webp" alt="Fast Minit personal" />
+      </div>
+      <div class="about-image-accent">
+        <div class="about-accent-num">10+</div>
+        <div class="about-accent-label">Tjänster under ett tak</div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="label-tag reveal">Om oss</div>
+      <h2 class="reveal reveal-delay-1">Vi fixar det <span class="em">mesta</span></h2>
+      <p class="reveal reveal-delay-2">Vi är hantverkarna på Torp Köpcentrum som tar hand om det du värdesätter. Skor, väskor, klockor, nycklar – och mycket mer. Kom in med vad som helst, så berättar vi vad vi kan göra.
+      <p class="reveal reveal-delay-3">Med erfarna hantverkare, modern utrustning och ett brett sortiment av material och verktyg kan vi lösa de flesta problem snabbt och till ett rimligt pris. Har du något ovanligt? Vi hittar en lösning!</p>
+      <div class="services-list reveal reveal-delay-3">
+        <div class="services-list-item">Skoreparation</div>
+        <div class="services-list-item">Väskreparation</div>
+        <div class="services-list-item">Klockservice</div>
+        <div class="services-list-item">Nyckelkopiering</div>
+        <div class="services-list-item">Gravering</div>
+        <div class="services-list-item">Nyckelservice</div>
+        <div class="services-list-item">Lestning</div>
+        <div class="services-list-item">Skovård & produkter</div>
+        <div class="services-list-item">Impregnering</div>
+        <div class="services-list-item">Skräddarsytt</div>
+      </div>
+      <a href="#kontakt" class="btn-primary reveal reveal-delay-4">
+        Kom förbi
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <div class="cta-band-inner">
+    <div class="label-tag reveal" style="justify-content:center;margin:0 auto 1.25rem;">Kom förbi</div>
+    <h2 class="reveal reveal-delay-1">Vi finns här – <span class="em">kom in</span></h2>
+    <p class="reveal reveal-delay-2">Ingen bokning krävs. Ta med det som behöver fixas så tar vi en titt direkt – utan kostnad och utan förbehåll. Vi hittar alltid en lösning.</p>
+    <div class="cta-band-buttons reveal reveal-delay-3">
+      <a href="#kontakt" class="btn-primary-inv">
+        Hitta oss
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="tel:052288920" class="btn-ghost-inv">Ring oss</a>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="kontakt" style="background:#fff;">
+  <div class="visit-section">
+    <div class="visit-header">
+      <div class="label-tag reveal">Hitta oss</div>
+      <h2 class="reveal reveal-delay-1">Vi finns på<br><span class="em">Torp Köpcentrum</span></h2>
+      <p class="visit-lead reveal reveal-delay-2">Kom förbi när du är i närheten – du behöver inte boka i förväg. Vi tar en snabb titt på ditt ärende utan kostnad och berättar vad vi kan göra.</p>
+    </div>
+    <div class="visit-cards reveal reveal-delay-2">
+      <div class="visit-card">
+        <div class="visit-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><div class="visit-card-label">Adress</div><div class="visit-card-value">Torp Köpcentrum<br>Uddevalla</div></div>
+      </div>
+      <div class="visit-card">
+        <div class="visit-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <div><div class="visit-card-label">Telefon</div><a href="tel:052288920"><div class="visit-card-value">0522-889 20</div></a></div>
+      </div>
+      <div class="visit-card">
+        <div class="visit-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+        <div><div class="visit-card-label">Öppettider</div><div class="visit-card-value">Mån–Fre 10–20<br>Lör-Sön 10–18</div></div>
+      </div>
+       
+      
+      
+    </div>
+    <div class="visit-cta reveal reveal-delay-3">
+      <div>
+        <span class="visit-cta-eyebrow">Ingen bokning behövs</span>
+        <span class="visit-cta-main">Kom bara in – vi hjälper dig direkt.</span>
+      </div>
+      <button onclick="document.getElementById('mapModal').classList.add('open')" class="btn-primary-inv">
+        Visa på karta
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- MAP MODAL -->
+<div class="map-modal-backdrop" id="mapModal">
+  <div class="map-modal">
+    <div class="map-modal-header">
+      <div class="map-modal-title">
+        <div class="map-modal-title-dot"></div>
+        Fast Minit – Torp Köpcentrum
+      </div>
+      <button class="map-modal-close" onclick="document.getElementById('mapModal').classList.remove('open')" aria-label="Stäng">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="map-wrap">
+      <img src="karta-torp.jpg" alt="Torp Köpcentrum karta" />
+      <div class="map-overlay-tint"></div>
+      <div class="map-pin-card" id="mapPinCard">
+        <div class="map-pin-dot"></div>
+        <div class="map-pin-text">
+          <div class="map-pin-name">Fast Minit</div>
+          <div class="map-pin-sub">Torp Köpcentrum · Uddevalla</div>
+        </div>
+      </div>
+      <a href="https://maps.google.com/?q=Torp+Köpcentrum+Uddevalla" class="map-corner-link" target="_blank">
+        Öppna i Google Maps
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo">FAST MINIT<span class="logo-dot" style="margin-left:0.4rem;background:#6B56CC;"></span></a>
+  <span>© 2026 Fast Minit. Alla rättigheter förbehållna.</span>
+  <div class="footer-links">
+    <a href="#">Integritetspolicy</a>
+    <a href="#">Instagram</a>
+    <a href="#">Facebook</a>
+  </div>
+</footer>
+
+<script>
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
+  });
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12; ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('a, button, .service-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { dot.style.width = '12px'; dot.style.height = '12px'; ring.style.width = '52px'; ring.style.height = '52px'; });
+    el.addEventListener('mouseleave', () => { dot.style.width = '8px'; dot.style.height = '8px'; ring.style.width = '36px'; ring.style.height = '36px'; });
+  });
+
+  const nav = document.getElementById('mainNav');
+  function updateNav() {
+    const heroH = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
+    nav.classList.toggle('scrolled', window.scrollY > heroH * 0.15);
+  }
+  window.addEventListener('scroll', updateNav);
+  updateNav();
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  document.getElementById('mapModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('mapModal').classList.remove('open');
+  });
+
+  const IMG_W = 1456, IMG_H = 816;
+  const PIN_X_RATIO = 1240 / 1456;
+  const PIN_Y_RATIO = 325 / 816;
+  function positionMapPin() {
+    const wrap = document.querySelector('.map-wrap');
+    const pin  = document.getElementById('mapPinCard');
+    if (!wrap || !pin) return;
+    const cW = wrap.offsetWidth, cH = wrap.offsetHeight;
+    const imgAspect = IMG_W / IMG_H, cAspect = cW / cH;
+    let renderedW, renderedH, offsetX = 0, offsetY = 0;
+    if (cAspect > imgAspect) {
+      renderedW = cW; renderedH = cW / imgAspect;
+      offsetY = -(renderedH - cH) * PIN_Y_RATIO;
+    } else {
+      renderedH = cH; renderedW = cH * imgAspect;
+      offsetX = -(renderedW - cW) * PIN_X_RATIO;
+    }
+    pin.style.left = (offsetX + PIN_X_RATIO * renderedW) + 'px';
+    pin.style.top  = (offsetY + PIN_Y_RATIO * renderedH) + 'px';
+    pin.style.transform = 'translate(-50%, calc(-100% - 12px))';
+  }
+  document.querySelectorAll('[onclick*="mapModal"]').forEach(btn => {
+    btn.addEventListener('click', () => setTimeout(positionMapPin, 30));
+  });
+  window.addEventListener('resize', () => {
+    if (document.getElementById('mapModal').classList.contains('open')) positionMapPin();
+  });
+
+  window.addEventListener('scroll', () => {
+    const heroImg = document.querySelector('.hero-bg img');
+    if (heroImg) heroImg.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+  });
+</script>
+</body>
+</html>
