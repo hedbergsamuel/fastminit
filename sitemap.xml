@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://fastminit.se/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -13,6 +13,10 @@
     <image:image>
       <image:loc>https://fastminit.se/og-image.jpg</image:loc>
       <image:title>Fast Minit – Skomakare i Uddevalla</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fastminit.se/klatterskor.jpg</image:loc>
+      <image:title>Omsulning av klätterskor hos Fast Minit i Uddevalla, Bohuslän</image:title>
     </image:image>
   </url>
 </urlset>
