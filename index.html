@@ -7,11 +7,13 @@
   <!-- Primary SEO -->
   <title>Fast Minit – Skomakare i Uddevalla | Omsulning av klätterskor</title>
   <meta name="description" content="Skomakare i Uddevalla på Torp Köpcentrum. Vi lagar skor, väskor, klockor och nycklar – och sular om klätterskor för dig som klättrar i Bohuslän. Välkommen till Fast Minit!" />
-  <meta name="keywords" content="skomakare Uddevalla, skomakeri Torp Köpcentrum, skoreparation, skovård, klockservice, nyckelservice, gravering, lästning, omsulning klätterskor, sula om klätterskor, resula klätterskor, laga klätterskor, randlagning klätterskor, klätterskor Uddevalla, klätterskor Bohuslän, Fast Minit" />
   <meta name="author" content="Fast Minit Uddevalla AB" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://fastminit.se/" />
   <meta name="theme-color" content="#4E3BAF" />
+
+  <!-- Preload LCP hero image -->
+  <link rel="preload" as="image" href="/hero-butik.webp" fetchpriority="high" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
@@ -21,6 +23,7 @@
   <meta property="og:image" content="https://fastminit.se/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Fast Minit skomakeri på Torp Köpcentrum i Uddevalla" />
   <meta property="og:locale" content="sv_SE" />
   <meta property="og:site_name" content="Fast Minit" />
 
@@ -41,15 +44,34 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "ShoeRepairShop"],
     "@id": "https://fastminit.se/#business",
     "name": "Fast Minit Uddevalla AB",
     "alternateName": "Fast Minit",
     "url": "https://fastminit.se/",
-    "image": "https://fastminit.se/og-image.jpg",
+    "image": [
+      "https://fastminit.se/hero-butik.webp",
+      "https://fastminit.se/og-image.jpg"
+    ],
     "logo": "https://fastminit.se/apple-touch-icon.png",
     "telephone": "+4652288920",
     "priceRange": "$$",
+    "currenciesAccepted": "SEK",
+    "hasMap": "https://www.google.com/maps?cid=12626518814398794456",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "10:00",
+        "closes": "20:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Saturday", "Sunday"],
+        "opens": "10:00",
+        "closes": "18:00"
+      }
+    ],
     "description": "Skomakare i Uddevalla på Torp Köpcentrum. Skoreparation, skovård, klockservice, nyckelservice, gravering, lästning och omsulning av klätterskor.",
     "address": {
       "@type": "PostalAddress",
@@ -812,6 +834,8 @@
     footer .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.25rem; color: #fff; text-decoration: none; }
     footer a { color: inherit; text-decoration: none; transition: color 0.2s; }
     footer a:hover { color: var(--indigo-light); }
+    footer .footer-nap a { text-decoration: underline; text-underline-offset: 2px; }
+    .footer-nap { flex-basis: 100%; text-align: center; color: rgba(255,255,255,0.5); line-height: 1.7; }
     .footer-links { display: flex; gap: 2rem; }
 
     /* ── ANIMATIONS ── */
@@ -881,7 +905,7 @@
 
 <!-- NAV -->
 <nav id="mainNav">
-  <a href="#" class="logo">FAST MINIT<span class="logo-dot" style="margin-left:0.4rem;"></span></a>
+  <a href="/" class="logo" aria-label="Fast Minit – till startsidan">FAST MINIT<span class="logo-dot" style="margin-left:0.4rem;"></span></a>
   <ul>
     <li><a href="#tjanster">Tjänster</a></li>
     <li><a href="#klatterskor">Klätterskor</a></li>
@@ -894,7 +918,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg">
-    <img src="hero-butik.webp" alt="Fast Minit skomakare på Torp Köpcentrum i Uddevalla" />
+    <img src="hero-butik.webp" alt="Fast Minit skomakare på Torp Köpcentrum i Uddevalla" width="1600" height="1200" fetchpriority="high" decoding="async" />
   </div>
   <div class="hero-glow"></div>
   <div class="hero-content">
@@ -991,17 +1015,17 @@
 <div class="images-strip">
   <div class="images-strip-inner">
     <div class="strip-img">
-      <img src="nyckelservice.jpg" alt="Nyckelservice och gravering hos Fast Minit i Uddevalla" />
+      <img src="nyckelservice.webp" alt="Nyckelservice och gravering hos Fast Minit i Uddevalla" width="800" height="534" loading="lazy" decoding="async" />
       <div class="strip-img-overlay"></div>
       <div class="strip-label">Nyckelservice</div>
     </div>
     <div class="strip-img">
-      <img src="klockservice.jpg" alt="Klockservice och batteribyte på Torp Köpcentrum i Uddevalla" />
+      <img src="klockservice.webp" alt="Klockservice och batteribyte på Torp Köpcentrum i Uddevalla" width="700" height="1050" loading="lazy" decoding="async" />
       <div class="strip-img-overlay"></div>
       <div class="strip-label">Klockservice</div>
     </div>
     <div class="strip-img">
-      <img src="skovard.jpg" alt="Professionell skovård och skoreparation på Torp Köpcentrum" />
+      <img src="skovard.webp" alt="Professionell skovård och skoreparation på Torp Köpcentrum" width="700" height="934" loading="lazy" decoding="async" />
       <div class="strip-img-overlay"></div>
       <div class="strip-label">Skovård</div>
     </div>
@@ -1027,11 +1051,12 @@
           Lämna in dina skor
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="tel:052288920" class="btn-ghost">Ring 0522-889 20</a>
+        <a href="/omsulning-klatterskor/" class="btn-ghost">Läs mer om omsulning</a>
+        <a href="tel:+4652288920" class="btn-ghost">Ring 0522-889 20</a>
       </div>
     </div>
     <div class="climb-image reveal reveal-delay-2">
-      <img src="klatterskor.jpg" alt="Klätterskor med sliten sula på granitklippa i Bohuslän – omsulning av klätterskor hos Fast Minit i Uddevalla" loading="lazy" />
+      <img src="klatterskor.webp" alt="Klätterskor med sliten sula på granitklippa i Bohuslän – omsulning av klätterskor hos Fast Minit i Uddevalla" width="1100" height="733" loading="lazy" decoding="async" />
       <div class="climb-image-badge">
         <span class="climb-badge-num">Bohuslän</span>
         <span class="climb-badge-label">Granit sliter – vi sular om</span>
@@ -1046,7 +1071,7 @@
     </details>
     <details>
       <summary>Vad kostar det att sula om klätterskor?</summary>
-      <p>Priset beror på skons modell och skick – ett rent sulbyte är billigare än sulbyte i kombination med randlagning. Ring oss på <a href="tel:052288920" style="color:#C8BFFF;">0522-889 20</a> eller kom förbi butiken så ger vi ett prisbesked direkt.</p>
+      <p>Priset beror på skons modell och skick – ett rent sulbyte är billigare än sulbyte i kombination med randlagning. Ring oss på <a href="tel:+4652288920" style="color:#C8BFFF;">0522-889 20</a> eller kom förbi butiken så ger vi ett prisbesked direkt.</p>
     </details>
     <details>
       <summary>Kan alla klätterskor sulas om?</summary>
@@ -1064,7 +1089,7 @@
   <div class="about">
     <div class="about-image-wrap reveal">
       <div class="about-image-main">
-        <img src="om-oss.webp" alt="Fast Minit personal på Torp Köpcentrum i Uddevalla" />
+        <img src="om-oss.webp" alt="Fast Minit personal på Torp Köpcentrum i Uddevalla" width="800" height="1067" loading="lazy" decoding="async" />
       </div>
       <div class="about-image-accent">
         <div class="about-accent-num">10+</div>
@@ -1108,7 +1133,7 @@
         Hitta oss
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="tel:052288920" class="btn-ghost-inv">Ring oss</a>
+      <a href="tel:+4652288920" class="btn-ghost-inv">Ring oss</a>
     </div>
   </div>
 </div>
@@ -1124,11 +1149,11 @@
     <div class="visit-cards reveal reveal-delay-2">
       <div class="visit-card">
         <div class="visit-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div><div class="visit-card-label">Adress</div><div class="visit-card-value">Torp Köpcentrum<br>Uddevalla</div></div>
+        <div><div class="visit-card-label">Adress</div><div class="visit-card-value">Torp Köpcentrum 100<br>451 76 Uddevalla</div></div>
       </div>
       <div class="visit-card">
         <div class="visit-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-        <div><div class="visit-card-label">Telefon</div><a href="tel:052288920"><div class="visit-card-value">0522-889 20</div></a></div>
+        <div><div class="visit-card-label">Telefon</div><a href="tel:+4652288920"><div class="visit-card-value">0522-889 20</div></a></div>
       </div>
       <div class="visit-card">
         <div class="visit-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
@@ -1164,7 +1189,7 @@
       </button>
     </div>
     <div class="map-wrap">
-      <img src="karta-torp.jpg" alt="Karta över Torp Köpcentrum i Uddevalla där Fast Minit ligger" />
+      <img src="karta-torp.webp" alt="Karta över Torp Köpcentrum i Uddevalla där Fast Minit ligger" width="1456" height="816" loading="lazy" decoding="async" />
       <div class="map-overlay-tint"></div>
       <div class="map-pin-card" id="mapPinCard">
         <div class="map-pin-dot"></div>
@@ -1183,8 +1208,9 @@
 
 <!-- FOOTER -->
 <footer>
-  <a href="#" class="logo">FAST MINIT<span class="logo-dot" style="margin-left:0.4rem;background:#6B56CC;"></span></a>
-  <span>© 2026 Fast Minit. Alla rättigheter förbehållna.</span>
+  <a href="/" class="logo">FAST MINIT<span class="logo-dot" style="margin-left:0.4rem;background:#6B56CC;"></span></a>
+  <span>© 2026 Fast Minit. Org.nr 559332-7231.</span>
+  <span class="footer-nap">Fast Minit Uddevalla AB &middot; Torp Köpcentrum 100, 451 76 Uddevalla &middot; <a href="tel:+4652288920">0522-889 20</a> &middot; <a href="/omsulning-klatterskor/">Omsulning av klätterskor</a></span>
 </footer>
 
 <script>
