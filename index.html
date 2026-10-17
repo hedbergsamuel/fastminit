@@ -246,7 +246,7 @@
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 1.75rem 5%;
+      padding: 1.5rem 5%;
       background: transparent;
       border-bottom: 1px solid transparent;
       transition: padding 0.4s, background 0.4s, border-color 0.4s;
@@ -260,22 +260,20 @@
     .logo {
       font-family: 'Syne', sans-serif;
       font-weight: 800; font-size: 1.5rem;
-      color: #fff;
+      color: var(--text-dark);
       text-decoration: none;
       letter-spacing: -0.02em;
       display: flex; align-items: center; gap: 0.5rem;
       transition: color 0.4s;
     }
-    nav.scrolled .logo { color: var(--text-dark); }
     .logo-dot {
       display: inline-block;
       width: 8px; height: 8px;
-      background: #fff;
+      background: var(--indigo-mid);
       border-radius: 50%;
       animation: pulse-dot 2s ease-in-out infinite;
       transition: background 0.4s;
     }
-    nav.scrolled .logo-dot { background: var(--indigo-mid); }
     @keyframes pulse-dot {
       0%, 100% { transform: scale(1); opacity: 1; }
       50% { transform: scale(1.4); opacity: 0.6; }
@@ -283,83 +281,81 @@
     nav ul { list-style: none; display: flex; gap: 2.5rem; align-items: center; }
     nav ul a {
       text-decoration: none; font-size: 0.875rem; font-weight: 400;
-      color: rgba(255,255,255,0.85); letter-spacing: 0.02em;
+      color: var(--text-mid); letter-spacing: 0.02em;
       transition: color 0.2s; position: relative;
     }
-    nav.scrolled ul a { color: var(--text-mid); }
     nav ul a::after {
       content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1px;
       background: currentColor;
       transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
     }
-    nav ul a:hover { color: #fff; }
-    nav.scrolled ul a:hover { color: var(--indigo-mid); }
+    nav ul a:hover { color: var(--indigo-mid); }
     nav ul a:hover::after { transform: scaleX(1); }
     .nav-cta {
-      background: rgba(255,255,255,0.15) !important;
+      background: var(--indigo-mid) !important;
       color: #fff !important;
-      border: 1px solid rgba(255,255,255,0.4) !important;
+      border: 1px solid var(--indigo-mid) !important;
       padding: 0.6rem 1.4rem; border-radius: 2px;
       font-weight: 600 !important; font-family: 'Syne', sans-serif;
       letter-spacing: 0.04em; font-size: 0.82rem !important;
-      text-transform: uppercase; transition: background 0.2s, transform 0.2s, border-color 0.4s !important;
-    }
-    nav.scrolled .nav-cta {
-      background: var(--indigo-mid) !important;
-      border-color: var(--indigo-mid) !important;
+      text-transform: uppercase; transition: background 0.2s, transform 0.2s !important;
     }
     .nav-cta::after { display: none !important; }
-    .nav-cta:hover { background: rgba(255,255,255,0.28) !important; transform: translateY(-1px) !important; }
-    nav.scrolled .nav-cta:hover { background: var(--indigo) !important; }
+    .nav-cta:hover { background: var(--indigo) !important; transform: translateY(-1px) !important; }
 
     /* ── HERO ── */
     .hero {
       min-height: 100vh; position: relative;
-      display: flex; align-items: flex-end;
-      padding: 0 5% 8rem; overflow: hidden;
+      display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 5rem; align-items: center;
+      padding: 8rem 5% 5rem; background: var(--bg);
     }
-    .hero-bg { position: absolute; inset: 0; background: #1A1530; z-index: 0; }
-    .hero-bg img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      opacity: 0.55; filter: saturate(0.65);
-    }
-   /* .hero-bg::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, #1A1530 0%, rgba(26,21,48,0.55) 40%, rgba(78,59,175,0.1) 100%);
-    }
-      */
-    .hero-glow {
-      position: absolute; width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(78,59,175,0.4) 0%, transparent 70%);
-      bottom: -100px; right: -100px; pointer-events: none; z-index: 1;
-    }
-    .hero-content { position: relative; z-index: 2; max-width: 900px; }
-    .hero-tag {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-      color: #fff; padding: 0.4rem 1rem; border-radius: 100px;
-      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em;
-      text-transform: uppercase; margin-bottom: 2rem;
+    .hero-content { max-width: 620px; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--indigo-mid); margin-bottom: 1.75rem;
       opacity: 0; animation: fade-up 0.7s 0.1s forwards;
     }
-    .hero-tag span { width: 6px; height: 6px; background: #fff; border-radius: 50%; display: inline-block; opacity: 0.8; }
+    .hero-eyebrow::before { content: ''; width: 28px; height: 1.5px; background: var(--indigo-mid); }
     h1 {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(2.6rem, 5.5vw, 4.8rem);
-      font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
-      color: #fff; margin-bottom: 1.75rem;
+      font-size: clamp(2.4rem, 4.4vw, 4rem);
+      font-weight: 700; line-height: 1.08; letter-spacing: -0.02em;
+      color: var(--text-dark); margin-bottom: 1.5rem;
       opacity: 0; animation: fade-up 0.7s 0.25s forwards;
     }
-    h1 .highlight { color: #C8BFFF; font-style: italic; }
+    h1 .highlight { color: var(--indigo-mid); }
     .hero-desc {
-      font-size: 1.15rem; color: rgba(255,255,255,0.7);
-      max-width: 540px; margin-bottom: 2.5rem;
+      font-size: 1.1rem; color: var(--text-mid);
+      max-width: 500px; margin-bottom: 2.25rem;
       font-weight: 300; line-height: 1.75;
       opacity: 0; animation: fade-up 0.7s 0.4s forwards;
     }
     .hero-actions {
       display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
       opacity: 0; animation: fade-up 0.7s 0.55s forwards;
+    }
+    .hero-facts {
+      list-style: none; display: flex; flex-wrap: wrap; gap: 0.6rem 2rem;
+      margin-top: 2.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+      font-size: 0.88rem; color: var(--text-mid);
+      opacity: 0; animation: fade-up 0.7s 0.7s forwards;
+    }
+    .hero-facts li { display: flex; align-items: center; gap: 0.5rem; }
+    .hero-facts li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--indigo-light); }
+    .hero-photo {
+      position: relative; aspect-ratio: 4/5; max-height: 76vh; width: 100%;
+      justify-self: end; border-radius: 2px;
+      opacity: 0; animation: fade-up 0.9s 0.3s forwards;
+    }
+    .hero-photo::before {
+      content: ''; position: absolute; inset: 1.25rem -1.25rem -1.25rem 1.25rem;
+      border: 1.5px solid var(--border-mid); border-radius: 2px; z-index: 0;
+    }
+    .hero-photo img {
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      object-fit: cover; display: block; border-radius: 2px;
+      box-shadow: 0 24px 60px rgba(26,21,48,0.18);
     }
     .btn-primary {
       display: inline-flex; align-items: center; gap: 0.5rem;
@@ -383,6 +379,8 @@
       border-radius: 2px; transition: border-color 0.2s, color 0.2s, transform 0.2s;
     }
     .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; transform: translateY(-2px); }
+    .hero .btn-ghost { border-color: var(--border-mid); color: var(--text-dark); }
+    .hero .btn-ghost:hover { border-color: var(--indigo-mid); color: var(--indigo-mid); }
     .hero-scroll {
       position: absolute; bottom: 2.5rem; right: 5%;
       display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
@@ -874,7 +872,9 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 900px) {
-      .hero { align-items: center; padding-top: 120px; padding-bottom: 6rem; }
+      .hero { grid-template-columns: 1fr; gap: 3rem; min-height: 0; padding-top: 7rem; padding-bottom: 4rem; }
+      .hero-photo { aspect-ratio: 4/3; max-height: none; justify-self: stretch; }
+      .hero-photo::before { inset: 0.9rem -0.6rem -0.9rem 0.6rem; }
       .climb-inner { grid-template-columns: 1fr; gap: 3rem; }
       .climb-image { max-width: 480px; }
       .climb-image img { height: auto; aspect-ratio: 3/2; }
@@ -883,21 +883,16 @@
       nav ul { display: none; }
       .nav-mobile-cta {
         display: inline-flex; align-items: center; gap: 0.5rem;
-        background: rgba(255,255,255,0.15);
+        background: var(--indigo-mid);
         color: #fff;
-        border: 1px solid rgba(255,255,255,0.4);
+        border: 1px solid var(--indigo-mid);
         padding: 0.55rem 1.1rem; border-radius: 2px;
         font-weight: 600; font-family: 'Syne', sans-serif;
         letter-spacing: 0.04em; font-size: 0.78rem;
         text-transform: uppercase; text-decoration: none;
         transition: background 0.2s, border-color 0.4s, color 0.4s;
       }
-      nav.scrolled .nav-mobile-cta {
-        background: var(--indigo-mid);
-        border-color: var(--indigo-mid);
-      }
-      .nav-mobile-cta:hover { background: rgba(255,255,255,0.28); }
-      nav.scrolled .nav-mobile-cta:hover { background: var(--indigo); }
+      .nav-mobile-cta:hover { background: var(--indigo); }
       .services-header { flex-direction: column; }
       .images-strip-inner { grid-template-columns: 1fr; height: auto; }
       .strip-img { height: 260px; }
@@ -939,14 +934,10 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-bg">
-    <img src="hero-butik.webp" alt="Fast Minit skomakare på Torp Köpcentrum i Uddevalla" width="1600" height="1200" fetchpriority="high" decoding="async" />
-  </div>
-  <div class="hero-glow"></div>
   <div class="hero-content">
-    <div class="hero-tag"><span></span>Skomakare i Uddevalla – Torp Köpcentrum</div>
-    <h1>När något går <span class="highlight">sönder</span><br>fixar vi det.</h1>
-    <p class="hero-desc">Skomakeri i Uddevalla — skovård, väskor, klockor, nycklar, gravering, lästning och omsulning av klätterskor. Allt under ett tak på Torp Köpcentrum. Snabbt, professionellt och med omsorg.</p>
+    <div class="hero-eyebrow">Skomakare i Uddevalla</div>
+    <h1>När något går <span class="highlight">sönder</span> fixar vi det.</h1>
+    <p class="hero-desc">Skor, väskor, klockor och nycklar – vi lagar, vårdar och kopierar på Torp Köpcentrum. Kom förbi så tar vi en titt direkt.</p>
     <div class="hero-actions">
       <a href="#kontakt" class="btn-primary">
         Hitta oss
@@ -954,8 +945,15 @@
       </a>
       <a href="#tjanster" class="btn-ghost">Se alla tjänster</a>
     </div>
+    <ul class="hero-facts">
+      <li>Ingen bokning behövs</li>
+      <li>Kostnadsfri bedömning</li>
+      <li>Öppet alla dagar</li>
+    </ul>
   </div>
- 
+  <div class="hero-photo">
+    <img src="hero-butik.webp" alt="Fast Minit skomakare på Torp Köpcentrum i Uddevalla" width="1600" height="1200" fetchpriority="high" decoding="async" />
+  </div>
 </section>
 
 <!-- TICKER -->
@@ -1319,11 +1317,6 @@
   });
   window.addEventListener('resize', () => {
     if (document.getElementById('mapModal').classList.contains('open')) positionMapPin();
-  });
-
-  window.addEventListener('scroll', () => {
-    const heroImg = document.querySelector('.hero-bg img');
-    if (heroImg) heroImg.style.transform = `translateY(${window.scrollY * 0.25}px)`;
   });
 </script>
 </body>
