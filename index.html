@@ -1279,5 +1279,27 @@
     if (document.getElementById('mapModal').classList.contains('open')) positionMapPin();
   });
 </script>
+<script>
+  // Klickmätning (GA4): ett delegerat event för alla CTA:er
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('a[href], button[onclick*="mapModal"]');
+    if (!el || typeof gtag !== 'function') return;
+    var href = el.getAttribute('href') || '';
+    var type = href.indexOf('tel:') === 0 ? 'ring'
+      : href.indexOf('#kontakt') !== -1 ? 'hitta_oss'
+      : href.indexOf('omsulning-klatterskor') !== -1 ? 'omsulning_sida'
+      : href.indexOf('g.page') !== -1 || href.indexOf('google.com/maps?cid') !== -1 ? 'recension'
+      : href.indexOf('maps.google') !== -1 ? 'google_maps'
+      : el.tagName === 'BUTTON' ? 'visa_karta' : null;
+    if (!type) return;
+    var sec = el.closest('section, nav, footer, .cta-band, .hero, header');
+    gtag('event', 'cta_click', {
+      cta_type: type,
+      cta_text: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40),
+      cta_location: sec ? (sec.id || sec.className.split(' ')[0] || sec.tagName.toLowerCase()) : 'okand',
+      page_path: location.pathname
+    });
+  });
+</script>
 </body>
 </html>
