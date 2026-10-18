@@ -196,22 +196,23 @@
       --indigo:       #3B2D8F;
       --indigo-mid:   #4E3BAF;
       --indigo-light: #6B56CC;
-      --indigo-pale:  #EEEAFB;
-      --indigo-xpale: #F7F5FE;
+      --indigo-pale:  #ECE8F6;
+      --indigo-xpale: #F6F2EA;
       --bg:           #F5F3F0;
-      --bg-warm:      #EEEAFB;
-      --bg-section:   #F0EDF8;
-      --card:         #FFFFFF;
-      --text-dark:    #1A1530;
-      --text-mid:     #4A4068;
+      --bg-warm:      #EFE9DE;
+      --bg-section:   #EFE9DE;
+      --card:         #FFFEFB;
+      --text-dark:    #1C1A22;
+      --text-mid:     #48434F;
       --text-muted:   #525263;
       --text-dim:     #6C6C7E;
       --electric:     #4E3BAF;
       --accent:       #4E3BAF;
-      --accent-light: rgba(78,59,175,0.08);
-      --border:       rgba(78,59,175,0.12);
-      --border-mid:   rgba(78,59,175,0.2);
-      --white:        #FFFFFF;
+      --accent-light: rgba(78,59,175,0.06);
+      --border:       rgba(70,55,40,0.14);
+      --border-mid:   rgba(70,55,40,0.24);
+      --white:        #FFFEFB;
+      --brass:        #A9823F;
     }
 
     html { scroll-behavior: smooth; }
@@ -297,7 +298,7 @@
       font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--indigo-mid); margin-bottom: 1.75rem;
     }
-    .hero-eyebrow::before { content: ''; width: 28px; height: 1.5px; background: var(--indigo-mid); }
+    .hero-eyebrow::before { content: ''; width: 28px; height: 1.5px; background: var(--brass); }
     h1 {
       font-family: var(--font-display);
       font-size: clamp(2.4rem, 4.4vw, 4rem);
@@ -378,7 +379,7 @@
     }
     .label-tag::before {
       content: ''; display: block; width: 24px; height: 1.5px;
-      background: var(--indigo-mid);
+      background: var(--brass);
     }
     h2 {
       font-family: var(--font-display);
@@ -409,7 +410,7 @@
       gap: 1px; background: var(--border); border: 1px solid var(--border);
     }
     .service-card {
-      background: #fff; padding: 2.5rem; position: relative;
+      background: var(--card); padding: 2.5rem; position: relative;
       overflow: hidden; cursor: default; transition: background 0.35s;
     }
     .service-card::before {
@@ -955,7 +956,7 @@
 </section>
 
 <!-- ABOUT -->
-<section id="om-oss" style="padding:0;background:#fff;">
+<section id="om-oss" style="padding:0;background:var(--card);">
   <div class="about">
     <div class="about-image-wrap">
       <div class="about-image-main">
@@ -1023,7 +1024,7 @@
 </div>
 
 <!-- CONTACT -->
-<section id="kontakt" style="background:#fff;">
+<section id="kontakt" style="background:var(--card);">
   <div class="visit-section">
     <div class="visit-header">
       <div class="label-tag">Hitta oss</div>
